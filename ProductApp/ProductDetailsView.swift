@@ -8,24 +8,57 @@
 import SwiftUI
 
 struct ProductDetailsView: View {
-    let product: Product
+    
+    var products: [Product] = []
+    @State var index: Int
     
     var body: some View {
         VStack (spacing: 16) {
-            AsyncImageView(imageURL: product.image)
-                .scaledToFit()
-                .frame(height: 300)
             
-            Text(product.title)
+           
+            HStack{
+                
+                Button(action: {
+                    index -= 1
+                }, label: {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(.gray)
+                        .bold()
+                })
+                .opacity(index == 0 ? 0 : 1)
+                .multilineTextAlignment(.trailing)
+                
+                Spacer()
+                
+                AsyncImageView(imageURL: products[index].image)
+                    .scaledToFit()
+                    .frame(height: 300)
+                
+                Spacer()
+                
+                Button(action: {
+                    withAnimation {
+                        index += 1
+                    }
+                }, label: {
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.gray)
+                        .bold()
+                })
+                .opacity(index == products.count - 1 ? 0 : 1)
+                .multilineTextAlignment(.trailing)
+            }
+            
+            Text(products[index].title)
                 .font(.headline)
             
-            Text(product.description)
+            Text(products[index].description)
                 .font(.footnote)
                 .foregroundStyle(.secondary)
             
             
             //Ratings
-            RatingView(rating: product.rating.rate.toString())
+            RatingView(rating: products[index].rating.rate.toString())
             
             Spacer()
             
@@ -35,7 +68,7 @@ struct ProductDetailsView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                     
-                    Text(product.price.currencyFormat())
+                    Text(products[index].price.currencyFormat())
                         .font(.title3)
                         .fontWeight(.bold)
                         .foregroundStyle(.indigo)
@@ -77,7 +110,7 @@ struct ProductDetailsView: View {
 }
 
 #Preview {
-    ProductDetailsView(product: Product.dummy)
+    ProductDetailsView(products: [Product.dummy], index: 0)
 }
 
 struct RatingView: View {
